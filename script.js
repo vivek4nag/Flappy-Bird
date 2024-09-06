@@ -24,7 +24,7 @@ window.onload = function(){
     board = document.getElementById("board")
     board.height = boardHeight
     board.width = boardWidth
-    context = board.getContext("2d") // used for drawing on board
+    context = board.getContext("2d") // retrieves a 2D rendering context for the canvas, allowing  to draw shapes, images, text, etc. onto it
 
 
     //drawing bird
@@ -34,7 +34,7 @@ window.onload = function(){
     // loading image
     birdImg = new Image()
     birdImg.src = "./images/flappybird.png"
-    birdImg.onload = function(){ // when the image gets loaded we are painitng it on canvas
+    birdImg.onload = function(){ // an event handler that triggers once the image (birdImg) has fully loaded. It ensures that the image is only drawn after it has been successfully loaded.
         context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
     }
 }
