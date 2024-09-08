@@ -74,7 +74,7 @@ function update(){
     //pipes
     for(i = 0; i < pipeArray.length; i++){
         let pipe = pipeArray[i];
-        pipe.x += velocityX
+        pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
     }
 
@@ -82,14 +82,32 @@ function update(){
 
 function placePipes(){
 
+    //random value (0 -1) * pipeHeight/2.
+    // if 0 -> -128 (pipeHeight/4)
+    // if 1 -> -128 -256 (pipeHeight/4 - pipeHeight/2) = -3/4 pipeHeight
+    let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
+    
+    let openSpace = boardHeight / 4; 
+
     let topPipe = {
         img : topPipeImg,
         x : pipeX,
-        y : pipeY,
+        y : randomPipeY,
         width : pipeWidth,
         height : pipeHeight,
         passed : false // to check whether the bird has passed the pipe yet
     }
 
     pipeArray.push(topPipe);
+
+    let bottomPipe = {
+        img : bottomPipeImg,
+        x : pipeX,
+        y : randomPipeY + pipeHeight + openSpace,
+        width : pipeWidth,
+        height : pipeHeight,
+        passed : false
+    }
+
+    pipeArray.push(bottomPipe);
 }
