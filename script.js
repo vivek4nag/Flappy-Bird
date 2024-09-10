@@ -33,6 +33,8 @@ let bottomPipeImg;
 
 //game Physics
 let velocityX = -2 // pipe's moving left speed
+let velocityY = 0; // bird's jump speed
+let gravity = 0.3
 
 
 window.onload = function(){
@@ -61,6 +63,8 @@ window.onload = function(){
 
     requestAnimationFrame(update);
     setInterval(placePipes, 1500) // generating new pipe evry 1.5s
+
+    document.addEventListener("keydown", moveBird); // whenever i press a key, this movebird function will be called
 }
 
 // the main game loop which will update frames
@@ -69,6 +73,9 @@ function update(){
     context.clearRect(0, 0, board.width, board.height) // evertime we are clearing prev frames
 
     //bird
+    velocityY += gravity
+    // bird.y += velocityY
+    bird.y = Math.max(bird.y + velocityY, 0) // so that bird does no go out of canvas from top if we contd press space. just limit the bird.y to top of canvas
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
 
     //pipes
@@ -87,7 +94,7 @@ function placePipes(){
     // if 1 -> -128 -256 (pipeHeight/4 - pipeHeight/2) = -3/4 pipeHeight
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
     
-    let openSpace = boardHeight / 4; 
+    let openSpace = board.height / 4; 
 
     let topPipe = {
         img : topPipeImg,
@@ -110,4 +117,12 @@ function placePipes(){
     }
 
     pipeArray.push(bottomPipe);
+}
+
+
+function moveBird(e){
+    if(e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyW"){
+        //jump if space or arrowup or W is pressed
+        velocityY = -6;
+    }
 }
