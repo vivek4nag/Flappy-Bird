@@ -1,10 +1,12 @@
 body{
+    height: 100vh;
     font-family:'Courier New', Courier, monospace;
     text-align: center;
-    background-color: #414141;
+    /* background-color: #414141; */
+    background: linear-gradient(-135deg, #080247, #4e76e3, #aa60f9, #2e54ee);
 }
 
 #board{
     /* background-color: skyblue; */
-    background-image: url(/images/flappybirdbg.png);
+    background-image: url(images/flappybirdbg.png);
 }
