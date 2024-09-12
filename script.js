@@ -10,7 +10,7 @@ let birdWidth = 34 // our image is width/height = 408 x 228 hence ration 17/12
 let birdHeight = 24
 // bird posititon => width/8 to make it left & height/2 to keep it center
 let birdX = boardWidth/8
-let birdY = boardHeight/4
+let birdY = boardHeight/5
 let birdImg
 
 let bird = {
@@ -136,7 +136,8 @@ function update(){
         // context.textAlign = "center"
         context.fillText("GAME OVER😢", 100, 150)
         context.fillText(`Your Score is: ${score}`, 95, 190)
-        context.fillText("Press Enter to Continue", 50, 220)
+        context.fillText("Press Enter to Play Again", 45, 220)
+        context.fillText("Use Space or ⬆️ to Jump", 40, 250)
 
         document.addEventListener('keydown', enterPressedHandler)
 
