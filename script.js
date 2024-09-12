@@ -10,7 +10,7 @@ let birdWidth = 34 // our image is width/height = 408 x 228 hence ration 17/12
 let birdHeight = 24
 // bird posititon => width/8 to make it left & height/2 to keep it center
 let birdX = boardWidth/8
-let birdY = boardHeight/2
+let birdY = boardHeight/4
 let birdImg
 
 let bird = {
@@ -36,6 +36,8 @@ let velocityX = -2 // pipe's moving left speed
 let velocityY = 0; // bird's jump speed
 let gravity = 0.3
 
+let gameOver = false;
+let score = 0
 
 window.onload = function(){
     board = document.getElementById("board")
@@ -62,14 +64,33 @@ window.onload = function(){
     bottomPipeImg.src = "./images/bottompipe.png"
 
     requestAnimationFrame(update);
-    setInterval(placePipes, 1500) // generating new pipe evry 1.5s
+    setInterval(placePipes, 1200) // generating new pipe evry 1.2s
 
     document.addEventListener("keydown", moveBird); // whenever i press a key, this movebird function will be called
 }
 
+// resetting game & disabling enter key
+let enterPressedHandler = function(e){
+    if(gameOver && e.key === 'Enter' ){
+        bird.y = birdY;
+        pipeArray = [];
+        score = 0;
+        gameOver = false;
+
+        // Remove the enter key listener after the game resets
+        document.removeEventListener('keydown', enterPressedHandler);
+    }
+};
+
+
 // the main game loop which will update frames
 function update(){
     requestAnimationFrame(update);
+
+    if(gameOver){
+        return
+    }
+
     context.clearRect(0, 0, board.width, board.height) // evertime we are clearing prev frames
 
     //bird
@@ -78,16 +99,69 @@ function update(){
     bird.y = Math.max(bird.y + velocityY, 0) // so that bird does no go out of canvas from top if we contd press space. just limit the bird.y to top of canvas
     context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height)
 
+    if(bird.y > board.height){
+        gameOver = true;
+    }
+
     //pipes
     for(i = 0; i < pipeArray.length; i++){
         let pipe = pipeArray[i];
         pipe.x += velocityX;
         context.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+
+        //score updation
+        if (!pipe.passed && bird.x > pipe.x + pipe.width){
+            score +=0.5; // 0.5 bcz there are 2 pipes top & bottom so it is taking both pipe if we make +=1. hencce 0.5*2 = 1 , 1 for each set of pipes
+            pipe.passed = true // so that we dont double check once passes
+        }
+
+        if(detectCollision(bird, pipe)){
+            gameOver = true;
+        }
+    }
+
+
+    // clearing pipes which are going off canvas
+    while (pipeArray.length > 0 && pipeArray[0].x < -pipeWidth){ // checking the x position of pipes which has gone passed 0
+        pipeArray.shift() // removes 1st element from array
+    }
+
+    //score
+    context.fillStyle = "black" // font color to draw score
+    context.font= "45px sans-serif"
+    context.fillText(score, 5, 45)
+
+    if (gameOver){
+        context.font = "25px sans-serif"
+        // context.textAlign = "center"
+        context.fillText("GAME OVER😢", 100, 150)
+        context.fillText(`Your Score is: ${score}`, 95, 190)
+        context.fillText("Press Enter to Continue", 50, 220)
+
+        document.addEventListener('keydown', enterPressedHandler)
+
+
+        // document.addEventListener('keydown', enterPressedHandler)
+        // const enterPressedHandler = function(e){
+        //     if(e.key === 'Enter' ){
+        //         bird.y = birdY
+        //         pipeArray = [];
+        //         score = 0
+        //         gameOver = false
+        //     }
+        //     // enter key will be disabled after resetting the game
+        //     document.removeEventListener('keydown', enterPressedHandler)
+        // }
+        // if enter is pressed the enterpress handler will reset the game & disable enter key
     }
 
 }
 
 function placePipes(){
+
+    if(gameOver){
+        return
+    }
 
     //random value (0 -1) * pipeHeight/2.
     // if 0 -> -128 (pipeHeight/4)
@@ -124,5 +198,21 @@ function moveBird(e){
     if(e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyW"){
         //jump if space or arrowup or W is pressed
         velocityY = -6;
+
+        //reset Game
+        // if(gameOver){
+        //     bird.y = birdY
+        //     pipeArray = [];
+        //     score = 0
+        //     gameOver = false
+        // }
     }
+}
+
+// collision detector will take 2 variable - position of bird & position of pipe
+function detectCollision(a, b){
+    return a.x < b.x + b.width && 
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y;
 }
